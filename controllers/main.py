@@ -95,8 +95,11 @@ class Auth0OAuthLogin(OAuthLogin):
             code=authorization_code,
             client_id=provider['client_id'],
             client_secret=provider['client_secret'],
+            # the redirect URI is not actually used for any redirection *here* since this is a
+            # backend async call, its simply a validation requirement as part of the auth0 process
             redirect_uri=request.httprequest.url_root + 'auth0/callback',
         ))
+        # the validation endpoint here must be HTTPs because this is where we are using our client secret
         req = urllib2.Request(provider['validation_endpoint'], post_data)
         req.add_header('Content-Type', 'application/json')
         try:

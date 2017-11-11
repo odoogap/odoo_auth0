@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import fields, models, _
+from odoo import fields, models
 import requests
 
 from odoo.exceptions import UserError
@@ -9,8 +9,8 @@ import json
 class Auth0(models.Model):
     _inherit = 'auth.oauth.provider'
 
-    client_secret = fields.Char(string=_('Client Secret'))
-    jwt_secret = fields.Char(string=_('JWT Secret'))
+    client_secret = fields.Char(string='Client Secret')
+    jwt_secret = fields.Char(string='JWT Secret')
 
     def get_auth0_oauth_provider(self):
         return self.env['auth.oauth.provider'].sudo().search([

@@ -15,11 +15,7 @@
         'views/signup.xml',
         'views/auth0_views.xml',
         'views/templates.xml'
-    ],
-    'demo': [
-    ],
-    'test': [
-    ],
+    ]
     'installable': True,
     'application': False,
     'auto_install': False,

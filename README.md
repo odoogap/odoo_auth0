@@ -53,14 +53,17 @@ to use some sort of connection that has a valid account you can use going forwar
  the user in Odoo will not work. For security purposes and considering a broader scope of implementation than just social OAuth providers,
  this module will automatically create a new complex password for the user *each time* they use it to sign in. This means that if you set
  a password for the use in Odoo and the user then logs in with Auth0 SSO, that Odoo password will be wiped replaced. This is purposely done
- as a trade off between security and convenience. In the case of SSO connections using an LDAP back auth provider the application is clear:
+ as a trade off between security and convenience. In the case of SSO connections using an LDAP backend auth provider the application is clear:
  If the user's account has been disabled in the LDAP server, the LDAP server won't allow them to authenticate and they are effectively blocked
- from getting in to your Odoo database. However, if the Odoo administrator set an Odoo password for this user and gave it to them,
- they could still use that to login. Since logging in that way uses their Odoo login and password effectively, they would effectively be
- bypassing LDAP authentication. **Not good.** This means that an administrator would have to remember to also disable their account or change their
- password in Odoo. Rather than relying on that paradigm, this module will instead just create a random and complex password each time the user
- logs in with Auth0 SSO. So in a corporate environment for example, this means that an employee would just be deactivated in the
+ from getting into your Odoo database. However, if the Odoo administrator set an Odoo password for this user and gave it to them,
+ they could still use that to login. Since logging in that way uses their Odoo login and password, they would effectively be bypassing
+ LDAP authentication. **Not good.** This means that an administrator would have to remember to also disable their account or change their
+ password in Odoo. Rather than relying on that paradigm, this module will instead make that situation impossible.
+ So in a corporate environment for example, this means that an employee would just be deactivated in the
  directory (e.g. LDAP or Active Directory) and they will also not be able to get into the Odoo database.
+ In the case of authenticating users with social connections, its also a good idea not to allow the user to set an Odoo password.
+ Often, certain types of users will use one password everywhere and might then actually use the actual password for their social account in
+ your Odoo database as well. This represents a terrible risk for the users and a possible liability for you.
  
  - At this time, this module does not validate the JWT signature provided by Auth0. As it currently is, the JWT signature is provided by Auth0
  through a request over an HTTPS connection using the Client Secret, which should be sufficiently secure to trust the JWT and not need to

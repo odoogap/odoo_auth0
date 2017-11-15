@@ -62,8 +62,9 @@ class Auth0OAuthLogin(OAuthLogin):
         # todo: create pages with explanations and make it easier for the user to retry
         if not profile:
             return 'Profile validation failed. Try again.'
-        if not profile['email_verified']:
-            return 'Please verify your email first then try again.'
+        if 'email_verified' in profile:
+            if not profile['email_verified']:
+                return 'Please verify your email first then try again.'
 
         # sure the user is authentic, but do they have a login for this DB?
         login = profile['email']

@@ -69,8 +69,8 @@ class Auth0OAuthLogin(OAuthLogin):
         # sure the user is authentic, but do they have a login for this DB?
         if 'email' not in profile:
             return request.render('website.http_error',
-                                  {'status_code': _('Bad Request'),
-                                   'status_message': _('Your email address was not returned with your login profile')})
+                                  {'status_code': _('Auth0'),
+                                   'status_message': _('Your profile does not have an email')})
         login = profile['email']
         password = self._ensure_password(login)
         if not password:

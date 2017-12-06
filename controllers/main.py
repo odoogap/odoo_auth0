@@ -67,6 +67,10 @@ class Auth0OAuthLogin(OAuthLogin):
                 return 'Please verify your email first then try again.'
 
         # sure the user is authentic, but do they have a login for this DB?
+        if 'email' not in profile:
+            return request.render('website.http_error',
+                                  {'status_code': _('Bad Request'),
+                                   'status_message': _('Your email address was not returned with your login profile')})
         login = profile['email']
         password = self._ensure_password(login)
         if not password:
@@ -126,8 +130,11 @@ class Auth0OAuthLogin(OAuthLogin):
             return False
 
         # Access tokens are deprecated - don't store it - see https://auth0.com/docs/api/management/v1
-        # removed code: request.session['auth0.access_token'] = data['access_token']
+        # request.session['auth0.access_token'] = data['access_token']
         # Save the JWT which is returned as the "id_token"
+        if 'id_token' not in data:
+            _logger.error('Auth0 expected id_token to be returned from %s' % provider['validation_endpoint'])
+            return False
         request.session['auth0.id_token'] = data['id_token']
         request.session['auth0.provider_id'] = provider_id
         profile = self.get_profile_data(request, provider['jwt_secret'])

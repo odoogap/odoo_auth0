@@ -23,6 +23,11 @@ RUN rm /tmp/tmp.zip
 ```
 This will download the module and unzip it's source in the image to `/tmp/downloaded-addons`, which of course you
 will need to add to the add-ons path in your Odoo config
+
+### Python dependencies
+If needed install pyjwt as follows:
+
+    pip install pyjwt
  
 ## Configure
 

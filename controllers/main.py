@@ -6,7 +6,8 @@ import werkzeug
 import werkzeug.urls
 from odoo.http import request
 import json
-import urllib2
+import urllib.request
+import urllib.error
 import logging
 import jwt
 import random
@@ -77,6 +78,7 @@ class Auth0OAuthLogin(OAuthLogin):
             return request.render('website.http_error',
                                   {'status_code': _('Bad Request'),
                                    'status_message': _('You are not allowed access to this database (1)')})
+
         login_uid = request.session.authenticate(request.session['auth0.session_db'], login, password)
         if login_uid is False:
             return request.render('website.http_error',
@@ -105,15 +107,19 @@ class Auth0OAuthLogin(OAuthLogin):
             redirect_uri=request.httprequest.url_root + 'auth0/callback',
         ))
         # the validation endpoint here must be HTTPs because this is where we are using our client secret
-        req = urllib2.Request(provider['validation_endpoint'], post_data)
-        req.add_header('Content-Type', 'application/json')
+        if not isinstance(post_data, dict):
+            post_data = json.loads(post_data)
+
+        post_data = urllib.parse.urlencode(post_data).encode("utf-8")
+        req = urllib.request.Request(provider['validation_endpoint'], data=post_data)
+
         try:
-            resp = urllib2.urlopen(req)
-            mime_type = resp.info().getheader('Content-Type')
-            if mime_type != 'application/json' or resp.code != 200:
+            resp = urllib.request.urlopen(req)
+
+            if resp.code != 200:
                 _logger.error('API call made to %s did not return the expected response' % provider['validation_endpoint'])
                 return False
-        except urllib2.HTTPError as e:
+        except urllib.error.HTTPError as e:
             _logger.error('%s API request failed: status code=%s; reason=%s'
                           % (provider['validation_endpoint'], e.code, e.reason))
             return False
@@ -122,11 +128,10 @@ class Auth0OAuthLogin(OAuthLogin):
         self._check_rate_limits(resp)
 
         try:
-            data = resp.read()
+            data = resp.read().decode('utf-8')
             data = json.loads(data)
-        except Exception, e:
-            _logger.error('failed decoding JSON response from %s: %s'
-                          % (provider['validation_endpoint'], json.dumps(e)))
+        except Exception as e:
+            _logger.error('failed decoding JSON response from %s: %s' % (provider['validation_endpoint'], e))
             return False
 
         # Access tokens are deprecated - don't store it - see https://auth0.com/docs/api/management/v1

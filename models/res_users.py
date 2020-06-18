@@ -54,7 +54,7 @@ class ResUsers(models.Model):
             self.update_oauth_user_info(oauth_user, provider, validation, params)
 
             return oauth_user.login
-        except AccessDenied, access_denied_exception:
+        except AccessDenied as access_denied_exception:
             if self.env.context.get('no_user_creation'):
                 return None
             state = json.loads(params['state'])

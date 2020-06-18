@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Auth0',
-    'version': '1.0',
+    'version': '11.0.1.0.0',
     'author': 'Odoo Community',
     'summary': 'Auth0 module for Odoo',
     'website': 'https://github.com/idazco/odoo_auth0',
